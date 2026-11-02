@@ -98,6 +98,69 @@ h1 {
     background: var(--naranja-barra);
 }
 
+/* ---------- Lonchera ---------- */
+.lonchera-fila {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.lonchera {
+    width: 120px;
+    flex-shrink: 0;
+    color: var(--texto); /* currentColor = color de las líneas */
+}
+
+.lonchera-fondo {
+    fill: var(--rosa-suave);
+}
+
+.lonchera-relleno {
+    fill: var(--rosa);
+    /* Crece de abajo hacia arriba. --lleno lo pone app.js (0 a 1) */
+    transform-box: fill-box;
+    transform-origin: bottom;
+    transform: scaleY(var(--lleno, 0));
+    transition: transform 0.9s ease-out;
+}
+
+.lonchera-broche {
+    fill: var(--naranja-pastel);
+}
+
+.grande small {
+    font-size: 16px;
+}
+
+.grande {
+    margin: 6px 0 0;
+}
+
+.chip {
+    display: inline-block;
+    margin: 4px 0 0;
+    background: var(--rosa-suave);
+    color: var(--rosa-oscuro);
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 12px;
+    padding: 4px 10px;
+}
+
+.proteina {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--rosa-suave);
+}
+
+.proteina p {
+    margin: 0;
+}
+
+.barra .verde-relleno {
+    background: var(--verde);
+}
+
 /* ---------- Lista "te falta" ---------- */
 .lista {
     list-style: none;
@@ -231,5 +294,5 @@ button:focus-visible {
 
 /* Si la persona pidió menos animaciones en su celular, las quitamos */
 @media (prefers-reduced-motion: reduce) {
-    .panel, .fondo, .boton { transition: none; }
+    .panel, .fondo, .boton, .lonchera-relleno { transition: none; }
 }

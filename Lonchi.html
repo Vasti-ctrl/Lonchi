@@ -16,15 +16,45 @@
         <p class="aviso-ejemplo">Datos de ejemplo</p>
     </header>
 
-    <!-- CALORÍAS -->
+    <!-- LONCHERA (calorías + proteína). Los números los pone app.js -->
     <section class="tarjeta">
-        <h2>Calorías</h2>
-        <p class="grande">Te quedan 420</p>
-        <p class="chico">de 1,600 kcal</p>
-        <!-- Llevas 1,180 de 1,600 = 74 % -->
-        <div class="barra" role="progressbar" aria-label="Calorías consumidas"
-             aria-valuemin="0" aria-valuemax="1600" aria-valuenow="1180">
-            <div class="relleno" style="width: 74%"></div>
+        <div class="lonchera-fila">
+            <svg class="lonchera" id="lonchera" viewBox="0 0 120 110" role="progressbar"
+                 aria-label="Calorías del día" aria-valuemin="0">
+                <defs>
+                    <clipPath id="caja">
+                        <rect x="6" y="24" width="108" height="80" rx="16"/>
+                    </clipPath>
+                </defs>
+                <!-- Asa -->
+                <path d="M40 24 V14 a8 8 0 0 1 8 -8 h24 a8 8 0 0 1 8 8 V24"
+                      fill="none" stroke="currentColor" stroke-width="6"/>
+                <!-- Caja vacía -->
+                <rect x="6" y="24" width="108" height="80" rx="16" class="lonchera-fondo"/>
+                <!-- Relleno que sube -->
+                <rect x="6" y="24" width="108" height="80" clip-path="url(#caja)"
+                      class="lonchera-relleno" id="lonchera-relleno"/>
+                <!-- Contorno, tapa y broche (encima del relleno) -->
+                <rect x="6" y="24" width="108" height="80" rx="16"
+                      fill="none" stroke="currentColor" stroke-width="4"/>
+                <line x1="6" y1="46" x2="114" y2="46" stroke="currentColor" stroke-width="4"/>
+                <rect x="50" y="39" width="20" height="14" rx="4" class="lonchera-broche"
+                      stroke="currentColor" stroke-width="3"/>
+            </svg>
+
+            <div>
+                <h2>Tu lonchera</h2>
+                <p class="grande"><span id="kcal-quedan">–</span> <small>kcal</small></p>
+                <p class="chico">te quedan de <span id="kcal-meta">–</span></p>
+                <p class="chip" id="lonchera-porcentaje">–</p>
+            </div>
+        </div>
+
+        <div class="proteina">
+            <p><strong>Proteína</strong> <span class="chico" id="prot-texto">–</span></p>
+            <div class="barra" role="progressbar" aria-label="Proteína del día" id="prot-barra" aria-valuemin="0">
+                <div class="relleno verde-relleno" id="prot-relleno"></div>
+            </div>
         </div>
     </section>
 
