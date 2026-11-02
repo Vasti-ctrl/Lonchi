@@ -15,6 +15,7 @@ Distintivo (gratis, no premium): ayudar a decidir ahorita con comida mexicana y 
 - HTML, CSS y JavaScript puro, sin frameworks al inicio.
 - PWA (instalable desde el navegador del celular) antes que app de tiendas. Capacitor queda para después.
 - Frontend primero, con datos de ejemplo en archivos JSON. Backend (cuentas, registros diarios, base de productos) después.
+  - Por ahora los datos de ejemplo están en `datos-ejemplo.js` (no .json) porque abrir con doble clic (file://) bloquea `fetch`. Pasar a JSON cuando se sirva desde un servidor (ej. GitHub Pages).
 - Diseño pensado para celular, ancho base 390 px.
 
 ## Pantallas (decisiones de Vasti)

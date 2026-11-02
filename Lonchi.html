@@ -120,15 +120,42 @@
     <!-- VENTANA DE AYUDA -->
     <div class="fondo" id="fondo"></div>
 
-    <div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panel-titulo">
+    <div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="titulo-paso-1">
         <button class="cerrar" id="btn-cerrar" aria-label="Cerrar">✕</button>
-        <h2 id="panel-titulo">¿Necesitas ayuda para elegir algo ahorita?</h2>
-        <p>Te doy 2 o 3 opciones según tu plan y lo que ya comiste.</p>
-        <button class="boton principal" id="btn-si">Sí, ayúdame</button>
-        <button class="boton" id="btn-no">Ahorita no</button>
-        <button class="boton-texto" id="btn-nunca">Solo preguntarme cuando yo lo pida</button>
+        <button class="atras" id="btn-atras" hidden>← Atrás</button>
+
+        <!-- Paso 1: ¿necesitas ayuda? -->
+        <div class="paso" id="paso-1">
+            <h2 id="titulo-paso-1" tabindex="-1">¿Necesitas ayuda para elegir algo ahorita?</h2>
+            <p>Te doy 2 o 3 opciones según tu plan y lo que ya comiste.</p>
+            <button class="boton principal" id="btn-si">Sí, ayúdame</button>
+            <button class="boton" id="btn-no">Ahorita no</button>
+            <button class="boton-texto" id="btn-nunca">Solo preguntarme cuando yo lo pida</button>
+        </div>
+
+        <!-- Paso 2: ¿dónde estás? -->
+        <div class="paso" id="paso-2" hidden>
+            <h2 id="titulo-paso-2" tabindex="-1">¿Dónde estás?</h2>
+            <div class="lugares" id="lugares-panel">
+                <button class="lugar" data-lugar="Casa"><span aria-hidden="true">🏠</span> Casa</button>
+                <button class="lugar" data-lugar="Trabajo"><span aria-hidden="true">💼</span> Trabajo</button>
+                <button class="lugar" data-lugar="Oxxo"><span aria-hidden="true">🏪</span> Oxxo</button>
+                <button class="lugar" data-lugar="7-Eleven"><span aria-hidden="true">🏪</span> 7-Eleven</button>
+                <button class="lugar" data-lugar="Costco"><span aria-hidden="true">🛒</span> Costco</button>
+                <button class="lugar" data-lugar="Cafetería"><span aria-hidden="true">☕</span> Cafetería</button>
+            </div>
+        </div>
+
+        <!-- Paso 3: las mejores opciones -->
+        <div class="paso" id="paso-3" hidden>
+            <h2 id="titulo-paso-3" tabindex="-1">Mejores opciones en <span id="opciones-lugar"></span></h2>
+            <p class="aviso-ejemplo">Datos de ejemplo</p>
+            <ul class="opciones" id="opciones"></ul>
+            <button class="boton" id="btn-listo">Listo, gracias</button>
+        </div>
     </div>
 
+    <script src="datos-ejemplo.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

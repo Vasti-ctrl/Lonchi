@@ -360,8 +360,73 @@ h1 {
     visibility: visible;
 }
 
+.panel {
+    max-height: 90vh;
+    overflow-y: auto; /* si no cabe, se puede deslizar dentro del panel */
+}
+
 .panel h2 {
     padding-right: 48px; /* espacio para la X */
+}
+
+.panel h2:focus {
+    outline: none; /* el título recibe el foco al cambiar de paso, no necesita contorno */
+}
+
+.atras {
+    min-height: 44px;
+    margin: -8px 0 8px -8px;
+    padding: 0 8px;
+    border: none;
+    border-radius: 12px;
+    background: none;
+    color: var(--rosa-oscuro);
+    font: inherit;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Opciones del paso 3 */
+.opciones {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+}
+
+.opcion {
+    border: 2px solid var(--rosa-suave);
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin-top: 10px;
+}
+
+.opcion-nombre {
+    margin: 0;
+    font-weight: bold;
+}
+
+.opcion-datos {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: var(--texto-2);
+}
+
+/* La mejor opción resalta en verde */
+.opcion.mejor {
+    background: var(--verde-suave);
+    border-color: var(--verde);
+}
+
+.insignia {
+    display: inline-block;
+    margin-bottom: 6px;
+    background: var(--verde);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 3px 10px;
 }
 
 .cerrar {

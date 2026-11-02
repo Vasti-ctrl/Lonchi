@@ -53,27 +53,39 @@ pintarLonchera();
 // ---------- Ventana de ayuda ----------
 const fondo = document.getElementById("fondo");
 const panel = document.getElementById("panel");
-const btnSi = document.getElementById("btn-si");
-const btnNo = document.getElementById("btn-no");
-const btnNunca = document.getElementById("btn-nunca");
-const btnCerrar = document.getElementById("btn-cerrar");
+const btnAtras = document.getElementById("btn-atras");
 
 // Guardar y leer preferencias. El try/catch evita errores
 // si el navegador bloquea el almacenamiento (ej. modo privado).
-function guardar(almacen, clave) {
-    try { almacen.setItem(clave, "si"); } catch (e) {}
+function guardar(almacen, clave, valor) {
+    try { almacen.setItem(clave, valor || "si"); } catch (e) {}
 }
 function leer(almacen, clave) {
-    try { return almacen.getItem(clave) === "si"; } catch (e) { return false; }
+    try { return almacen.getItem(clave); } catch (e) { return null; }
 }
 
 let focoAnterior = null; // botón que abrió la ventana, para regresar ahí al cerrar
+let historial = [];      // pasos visitados, para el botón "Atrás"
 
-function abrir() {
+// Muestra un paso y esconde los demás
+function mostrarPaso(numero) {
+    [1, 2, 3].forEach(function (n) {
+        document.getElementById("paso-" + n).hidden = (n !== numero);
+    });
+    historial.push(numero);
+    // "Atrás" solo aparece si hay un paso anterior al cual regresar
+    btnAtras.hidden = historial.length < 2;
+    // El lector de pantalla anuncia el título del paso actual
+    panel.setAttribute("aria-labelledby", "titulo-paso-" + numero);
+    document.getElementById("titulo-paso-" + numero).focus();
+}
+
+function abrir(paso) {
     focoAnterior = document.activeElement;
+    historial = [];
     fondo.classList.add("abierto");
     panel.classList.add("abierto");
-    btnSi.focus();
+    mostrarPaso(paso || 1);
 }
 
 function cerrar() {
@@ -82,54 +94,111 @@ function cerrar() {
     if (focoAnterior && focoAnterior !== document.body) focoAnterior.focus();
 }
 
+btnAtras.addEventListener("click", function () {
+    historial.pop();                  // quitamos el paso actual
+    const anterior = historial.pop(); // y regresamos al anterior (mostrarPaso lo vuelve a guardar)
+    mostrarPaso(anterior);
+});
+
+// Paso 1
+document.getElementById("btn-si").addEventListener("click", function () {
+    mostrarPaso(2);
+});
+
 // "Ahorita no": no vuelve a salir en esta sesión (sessionStorage se borra al cerrar la pestaña)
-btnNo.addEventListener("click", function () {
+document.getElementById("btn-no").addEventListener("click", function () {
     guardar(sessionStorage, "lonchi-ahorita-no");
     cerrar();
 });
 
 // "Solo cuando yo lo pida": no vuelve a salir sola nunca (localStorage se queda guardado)
-btnNunca.addEventListener("click", function () {
+document.getElementById("btn-nunca").addEventListener("click", function () {
     guardar(localStorage, "lonchi-solo-si-pido");
     cerrar();
 });
 
-// Por ahora "Sí" solo cierra; los pasos 2 y 3 vienen después
-btnSi.addEventListener("click", cerrar);
-btnCerrar.addEventListener("click", cerrar);
+// Paso 2: al elegir lugar, pasamos a las opciones
+document.querySelectorAll("#lugares-panel .lugar").forEach(function (boton) {
+    boton.addEventListener("click", function () {
+        elegirLugar(boton.dataset.lugar);
+        mostrarOpciones(boton.dataset.lugar);
+    });
+});
+
+// Paso 3: pinta las opciones de ese lugar (la mejor primero)
+function mostrarOpciones(lugar) {
+    document.getElementById("opciones-lugar").textContent = lugar;
+    const lista = document.getElementById("opciones");
+    lista.innerHTML = ""; // vaciar la lista anterior
+
+    const opciones = (opcionesEjemplo[lugar] || []).slice(); // copia para no cambiar el original
+    opciones.sort(function (a, b) { return (b.mejor ? 1 : 0) - (a.mejor ? 1 : 0); });
+
+    opciones.forEach(function (op) {
+        const li = document.createElement("li");
+        li.className = op.mejor ? "opcion mejor" : "opcion";
+        // textContent (y no innerHTML) para que ningún texto se interprete como código
+        if (op.mejor) {
+            const insignia = document.createElement("span");
+            insignia.className = "insignia";
+            insignia.textContent = "⭐ Mejor opción";
+            li.appendChild(insignia);
+        }
+        const nombre = document.createElement("p");
+        nombre.className = "opcion-nombre";
+        nombre.textContent = op.nombre;
+        const datos = document.createElement("p");
+        datos.className = "opcion-datos";
+        datos.textContent = op.kcal + " kcal · " + op.proteina + " g proteína (ej.)";
+        li.appendChild(nombre);
+        li.appendChild(datos);
+        lista.appendChild(li);
+    });
+
+    mostrarPaso(3);
+}
+
+document.getElementById("btn-listo").addEventListener("click", cerrar);
+document.getElementById("btn-cerrar").addEventListener("click", cerrar);
 fondo.addEventListener("click", cerrar);
 document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") cerrar();
+    if (e.key === "Escape" && panel.classList.contains("abierto")) cerrar();
 });
 
 // Botones de inicio: siempre abren la ayuda (aunque haya elegido
 // "solo cuando yo lo pida", porque aquí sí la está pidiendo).
-// Por ahora "Estoy en la tienda" abre el mismo paso 1; luego irá directo a lugar/opciones.
-document.getElementById("btn-que-como").addEventListener("click", abrir);
-document.getElementById("btn-tienda").addEventListener("click", abrir);
+// Van directo al paso 2 porque ya pidió ayuda.
+document.getElementById("btn-que-como").addEventListener("click", function () { abrir(2); });
+document.getElementById("btn-tienda").addEventListener("click", function () { abrir(2); });
 
-// ---------- ¿Dónde estás? ----------
-const botonesLugar = document.querySelectorAll(".lugar");
+// ---------- ¿Dónde estás? (tarjeta en Hoy) ----------
+const botonesLugar = document.querySelectorAll("#lugares .lugar");
 const lugarTexto = document.getElementById("lugar-texto");
+
+// Marca el lugar en la tarjeta de Hoy y lo guarda en la sesión
+function elegirLugar(lugar) {
+    botonesLugar.forEach(function (b) {
+        b.setAttribute("aria-pressed", b.dataset.lugar === lugar ? "true" : "false");
+    });
+    guardar(sessionStorage, "lonchi-lugar", lugar);
+    lugarTexto.textContent = "Estás en " + lugar + ".";
+}
 
 botonesLugar.forEach(function (boton) {
     boton.addEventListener("click", function () {
-        // Desmarcar todos y marcar solo el que tocó
-        botonesLugar.forEach(function (b) { b.setAttribute("aria-pressed", "false"); });
-        boton.setAttribute("aria-pressed", "true");
-        const lugar = boton.dataset.lugar; // viene de data-lugar="..."
-        try { sessionStorage.setItem("lonchi-lugar", lugar); } catch (e) {}
-        lugarTexto.textContent = "Estás en " + lugar + ". Las opciones de aquí llegan pronto.";
+        elegirLugar(boton.dataset.lugar);
+        // Abrimos la ventana directo en las opciones de ese lugar
+        focoAnterior = boton;
+        historial = [2]; // así "Atrás" lleva a elegir otro lugar
+        fondo.classList.add("abierto");
+        panel.classList.add("abierto");
+        mostrarOpciones(boton.dataset.lugar);
     });
 });
 
-// Si ya había elegido lugar en esta sesión, lo volvemos a marcar
-try {
-    const guardado = sessionStorage.getItem("lonchi-lugar");
-    botonesLugar.forEach(function (b) {
-        if (b.dataset.lugar === guardado) b.click();
-    });
-} catch (e) {}
+// Si ya había elegido lugar en esta sesión, lo volvemos a marcar (sin abrir la ventana)
+const lugarGuardado = leer(sessionStorage, "lonchi-lugar");
+if (lugarGuardado) elegirLugar(lugarGuardado);
 
 // ---------- Antojómetro ----------
 // Cada nivel tiene su carita, su nombre y un mensaje (sin regaños).
@@ -186,5 +255,5 @@ document.getElementById("btn-gusto-no").addEventListener("click", function () {
 
 // Abrir al entrar, solo si no dijo que no
 if (!leer(sessionStorage, "lonchi-ahorita-no") && !leer(localStorage, "lonchi-solo-si-pido")) {
-    abrir();
+    abrir(1);
 }
