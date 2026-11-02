@@ -58,7 +58,7 @@ Distintivo (gratis, no premium): ayudar a decidir ahorita con comida mexicana y 
 - Ayuda a crear la estructura JSON y un script para importar lo que Vasti capture.
 
 ## Diseño
-- **Cambio (nov 2026): estilo más colorido y juguetón.** Paleta nueva pendiente de definir con Vasti; mantener buen contraste.
+- **Cambio (nov 2026): estilo más colorido y juguetón.** Paleta elegida por Vasti: rosa mexicano, naranja pastel y verde (tonos exactos por definir); mantener buen contraste.
 - Paleta anterior (tranquila, referencia): fondo crema `#F6F4EE`, verde `#3F6B50`, texto `#26332C`, verde suave `#E3ECE5`, naranja suave `#B7683A` para "de más", gris `#5B6660` para texto secundario.
 - Tipografía DM Sans, tarjetas con esquinas de 20 px, botones de al menos 44 px de alto.
 - Buen contraste y botones accesibles con teclado.
