@@ -19,13 +19,15 @@ Distintivo (gratis, no premium): ayudar a decidir ahorita con comida mexicana y 
 
 ## Pantallas (decisiones de Vasti)
 **Hoy**
-1. Calorías (te quedan X de Y, proteína).
+1. Lonchera que se llena conforme comes (reemplaza al anillo/barra de calorías): te quedan X de Y kcal y proteína.
 2. "Te falta…" (ej. fibra) con opciones concretas para completarlo.
 3. "De más" (ej. carbohidratos).
 4. "¿Dónde estás?" con botones de lugar.
 5. Tarjeta "¿Quieres darte un gusto hoy?".
 - Pendiente de confirmar: una pregunta de cómo se siente el usuario con su meta (déficit, masa muscular u otra).
 - Botón visible "¿Qué como ahorita?" en el inicio.
+- Botón "Estoy en la tienda": abre directo la ventana de ayuda en el paso de lugar/opciones.
+- Antojómetro: el usuario marca qué tanto antojo trae; ayuda a decidir el gusto o la opción.
 
 **Ventana de ayuda (un solo panel que sube desde abajo y cambia de paso)**
 1. "¿Necesitas ayuda para elegir algo ahorita?" con "Sí, ayúdame" y "Ahorita no". Sale al entrar a la app.
@@ -56,7 +58,8 @@ Distintivo (gratis, no premium): ayudar a decidir ahorita con comida mexicana y 
 - Ayuda a crear la estructura JSON y un script para importar lo que Vasti capture.
 
 ## Diseño
-- Tranquilo: fondo crema `#F6F4EE`, verde `#3F6B50`, texto `#26332C`, verde suave `#E3ECE5`, naranja suave `#B7683A` para "de más", gris `#5B6660` para texto secundario.
+- **Cambio (nov 2026): estilo más colorido y juguetón.** Paleta nueva pendiente de definir con Vasti; mantener buen contraste.
+- Paleta anterior (tranquila, referencia): fondo crema `#F6F4EE`, verde `#3F6B50`, texto `#26332C`, verde suave `#E3ECE5`, naranja suave `#B7683A` para "de más", gris `#5B6660` para texto secundario.
 - Tipografía DM Sans, tarjetas con esquinas de 20 px, botones de al menos 44 px de alto.
 - Buen contraste y botones accesibles con teclado.
 
