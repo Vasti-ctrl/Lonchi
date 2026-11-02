@@ -13,30 +13,55 @@ const hoy = {
 };
 
 // ---------- Lonchera ----------
+const svgLonchera = document.getElementById("lonchera");
+const sinMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
 function formato(n) {
     return n.toLocaleString("es-MX");
 }
 
-function pintarLonchera() {
+// Cuenta de un número a otro poco a poco (para que se vea cómo bajan las kcal)
+function animarNumero(elemento, desde, hasta, ms) {
+    if (sinMovimiento) { elemento.textContent = formato(hasta); return; }
+    const inicio = performance.now();
+    function paso(ahora) {
+        const avance = Math.min((ahora - inicio) / ms, 1);
+        elemento.textContent = formato(Math.round(desde + (hasta - desde) * avance));
+        if (avance < 1) requestAnimationFrame(paso);
+    }
+    requestAnimationFrame(paso);
+}
+
+// Vuelve a disparar una animación CSS aunque ya se haya usado antes
+function reiniciarAnimacion(elemento, clase) {
+    elemento.classList.remove(clase);
+    void elemento.getBoundingClientRect(); // obliga al navegador a "olvidar" la animación anterior
+    elemento.classList.add(clase);
+}
+
+// quedanAntes: si viene, el número cuenta desde ahí (cuando agregas comida)
+function pintarLonchera(quedanAntes) {
     const lleno = Math.min(hoy.kcalComidas / hoy.kcalMeta, 1); // nunca más de 1 (100 %)
     const quedan = Math.max(hoy.kcalMeta - hoy.kcalComidas, 0);
     const porcentaje = Math.round(lleno * 100);
 
-    document.getElementById("kcal-quedan").textContent = formato(quedan);
+    const kcalQuedan = document.getElementById("kcal-quedan");
+    if (quedanAntes === undefined) {
+        kcalQuedan.textContent = formato(quedan);
+    } else {
+        animarNumero(kcalQuedan, quedanAntes, quedan, 700);
+    }
     document.getElementById("kcal-meta").textContent = formato(hoy.kcalMeta) + " kcal";
     document.getElementById("lonchera-porcentaje").textContent = porcentaje + " % llena";
 
-    const svg = document.getElementById("lonchera");
-    svg.setAttribute("aria-valuemax", hoy.kcalMeta);
-    svg.setAttribute("aria-valuenow", hoy.kcalComidas);
-    svg.setAttribute("aria-valuetext", "Llevas " + formato(hoy.kcalComidas) + " de " + formato(hoy.kcalMeta) + " kcal");
+    svgLonchera.setAttribute("aria-valuemax", hoy.kcalMeta);
+    svgLonchera.setAttribute("aria-valuenow", Math.min(hoy.kcalComidas, hoy.kcalMeta));
+    svgLonchera.setAttribute("aria-valuetext", "Llevas " + formato(hoy.kcalComidas) + " de " + formato(hoy.kcalMeta) + " kcal");
 
     // Esperamos un instante para que se vea la animación de llenado
-    requestAnimationFrame(function () {
-        setTimeout(function () {
-            svg.style.setProperty("--lleno", lleno);
-        }, 50);
-    });
+    setTimeout(function () {
+        svgLonchera.style.setProperty("--lleno", lleno);
+    }, 50);
 
     // Proteína
     const prot = Math.min(hoy.protComidas / hoy.protMeta, 1);
@@ -45,7 +70,48 @@ function pintarLonchera() {
     document.getElementById("prot-relleno").style.width = (prot * 100) + "%";
     const barra = document.getElementById("prot-barra");
     barra.setAttribute("aria-valuemax", hoy.protMeta);
-    barra.setAttribute("aria-valuenow", hoy.protComidas);
+    barra.setAttribute("aria-valuenow", Math.min(hoy.protComidas, hoy.protMeta));
+}
+
+// Cuando eliges una opción: cierra la ventana, sube a la lonchera y la anima
+function agregarALonchera(op) {
+    cerrar({ sinFoco: true });
+
+    const tarjeta = document.getElementById("tarjeta-lonchera");
+    tarjeta.scrollIntoView({ behavior: sinMovimiento ? "auto" : "smooth", block: "center" });
+    // El foco va al título de la lonchera (sin volver a mover la pantalla)
+    document.getElementById("titulo-lonchera").focus({ preventScroll: true });
+
+    const quedanAntes = Math.max(hoy.kcalMeta - hoy.kcalComidas, 0);
+    hoy.kcalComidas += op.kcal;
+    hoy.protComidas += op.proteina;
+
+    const espera = sinMovimiento ? 0 : 450;  // tiempo para que termine de subir la pantalla
+    const caida = sinMovimiento ? 0 : 550;   // tiempo de la comida cayendo
+
+    setTimeout(function () {
+        if (!sinMovimiento) {
+            const comida = document.getElementById("comida-cae");
+            comida.textContent = op.emoji || "🍽️";
+            reiniciarAnimacion(comida, "cayendo");
+        }
+
+        setTimeout(function () {
+            pintarLonchera(quedanAntes);
+            if (!sinMovimiento) {
+                reiniciarAnimacion(svgLonchera, "apachurra");
+                const flota = document.getElementById("kcal-flota");
+                flota.textContent = "+" + op.kcal + " kcal";
+                reiniciarAnimacion(flota, "flotando");
+            }
+            const mensaje = document.getElementById("lonchera-mensaje");
+            if (hoy.kcalComidas >= hoy.kcalMeta) {
+                mensaje.textContent = "Agregaste " + op.nombre + ". Tu lonchera ya está llena por hoy. Todo bien, mañana seguimos.";
+            } else {
+                mensaje.textContent = "Agregaste " + op.nombre + " (+" + op.kcal + " kcal, ejemplo).";
+            }
+        }, caida);
+    }, espera);
 }
 
 pintarLonchera();
@@ -88,10 +154,12 @@ function abrir(paso) {
     mostrarPaso(paso || 1);
 }
 
-function cerrar() {
+// opciones.sinFoco: no regresar el foco al botón que abrió (lo usa agregarALonchera)
+function cerrar(opciones) {
     fondo.classList.remove("abierto");
     panel.classList.remove("abierto");
-    if (focoAnterior && focoAnterior !== document.body) focoAnterior.focus();
+    const sinFoco = opciones && opciones.sinFoco;
+    if (!sinFoco && focoAnterior && focoAnterior !== document.body) focoAnterior.focus();
 }
 
 btnAtras.addEventListener("click", function () {
@@ -136,31 +204,40 @@ function mostrarOpciones(lugar) {
 
     opciones.forEach(function (op) {
         const li = document.createElement("li");
-        li.className = op.mejor ? "opcion mejor" : "opcion";
+        // Cada opción es un botón: se puede tocar o elegir con teclado
+        const boton = document.createElement("button");
+        boton.className = op.mejor ? "opcion mejor" : "opcion";
         // textContent (y no innerHTML) para que ningún texto se interprete como código
+        const emoji = document.createElement("span");
+        emoji.className = "opcion-emoji";
+        emoji.setAttribute("aria-hidden", "true");
+        emoji.textContent = op.emoji || "";
+        boton.appendChild(emoji);
         if (op.mejor) {
             const insignia = document.createElement("span");
             insignia.className = "insignia";
             insignia.textContent = "⭐ Mejor opción";
-            li.appendChild(insignia);
+            boton.appendChild(insignia);
         }
-        const nombre = document.createElement("p");
+        const nombre = document.createElement("span");
         nombre.className = "opcion-nombre";
         nombre.textContent = op.nombre;
-        const datos = document.createElement("p");
+        const datos = document.createElement("span");
         datos.className = "opcion-datos";
         datos.textContent = op.kcal + " kcal · " + op.proteina + " g proteína (ej.)";
-        li.appendChild(nombre);
-        li.appendChild(datos);
+        boton.appendChild(nombre);
+        boton.appendChild(datos);
+        boton.addEventListener("click", function () { agregarALonchera(op); });
+        li.appendChild(boton);
         lista.appendChild(li);
     });
 
     mostrarPaso(3);
 }
 
-document.getElementById("btn-listo").addEventListener("click", cerrar);
-document.getElementById("btn-cerrar").addEventListener("click", cerrar);
-fondo.addEventListener("click", cerrar);
+document.getElementById("btn-listo").addEventListener("click", function () { cerrar(); });
+document.getElementById("btn-cerrar").addEventListener("click", function () { cerrar(); });
+fondo.addEventListener("click", function () { cerrar(); });
 document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && panel.classList.contains("abierto")) cerrar();
 });

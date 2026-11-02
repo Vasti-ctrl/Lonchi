@@ -88,6 +88,7 @@ h1 {
     height: 12px;
     background: var(--rosa);
     border-radius: 6px;
+    transition: width 0.6s ease-out;
 }
 
 .naranja .barra {
@@ -102,30 +103,116 @@ h1 {
 .lonchera-fila {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
+}
+
+.lonchera-caja {
+    position: relative; /* para colocar encima la comida que cae */
+    width: 130px;
+    flex-shrink: 0;
 }
 
 .lonchera {
-    width: 120px;
-    flex-shrink: 0;
-    color: var(--texto); /* currentColor = color de las líneas */
+    display: block;
+    width: 100%;
+    overflow: visible;
+    transform-origin: 50% 100%; /* se apachurra desde abajo */
 }
 
-.lonchera-fondo {
-    fill: var(--rosa-suave);
+/* Colores propios de la lonchera */
+.lonchera {
+    --menta: #A8DDBF;
+    --menta-clara: #E6F6EC;
+    --menta-relleno: #6CC494;
+    --contorno: #2E5E45;
 }
+
+.asa-borde { fill: none; stroke: var(--contorno); stroke-width: 13; stroke-linecap: round; }
+.asa       { fill: none; stroke: var(--rosa); stroke-width: 7; stroke-linecap: round; }
+.cuerpo    { fill: var(--menta-clara); }
+.contorno  { fill: none; stroke: var(--contorno); stroke-width: 4; }
+.tapa      { fill: var(--menta); stroke: var(--contorno); stroke-width: 4; }
+.cierre    { fill: none; stroke: white; stroke-width: 2.5; stroke-linejoin: round; }
+.jaladera  { fill: var(--naranja-pastel); stroke: var(--contorno); stroke-width: 2.5; }
+.costura   { fill: none; stroke: var(--contorno); stroke-width: 2; stroke-dasharray: 5 4; opacity: 0.35; }
+.brillo    { fill: none; stroke: white; stroke-width: 3.5; stroke-linecap: round; opacity: 0.8; }
 
 .lonchera-relleno {
-    fill: var(--rosa);
-    /* Crece de abajo hacia arriba. --lleno lo pone app.js (0 a 1) */
-    transform-box: fill-box;
-    transform-origin: bottom;
-    transform: scaleY(var(--lleno, 0));
+    fill: var(--menta-relleno);
+    /* Sube según --lleno (0 = vacía, 1 = llena). 72 = alto visible del cuerpo */
+    transform: translateY(calc((1 - var(--lleno, 0)) * 72px));
     transition: transform 0.9s ease-out;
 }
 
-.lonchera-broche {
-    fill: var(--naranja-pastel);
+.lonchera-mensaje {
+    margin: 8px 0 0;
+    min-height: 1em;
+}
+
+#titulo-lonchera:focus {
+    outline: none;
+}
+
+/* ----- Animación al agregar comida ----- */
+
+/* 1. La comida cae dentro de la lonchera */
+.comida-cae {
+    position: absolute;
+    left: 50%;
+    top: 30px;
+    font-size: 38px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.comida-cae.cayendo {
+    animation: cae 0.75s ease-in forwards;
+}
+
+@keyframes cae {
+    0%   { transform: translate(-50%, -90px) scale(1.4) rotate(-20deg); opacity: 0; }
+    20%  { opacity: 1; }
+    70%  { transform: translate(-50%, 6px) scale(1) rotate(10deg); opacity: 1; }
+    100% { transform: translate(-50%, 34px) scale(0.3); opacity: 0; }
+}
+
+/* 2. La lonchera se apachurra como gelatina */
+.lonchera.apachurra {
+    animation: apachurra 0.55s ease-out;
+}
+
+@keyframes apachurra {
+    0%   { transform: scale(1, 1); }
+    30%  { transform: scale(1.1, 0.88); }
+    60%  { transform: scale(0.95, 1.06); }
+    100% { transform: scale(1, 1); }
+}
+
+/* 3. "+130 kcal" sube flotando */
+.kcal-flota {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    white-space: nowrap;
+    background: white;
+    color: var(--rosa-oscuro);
+    border: 2px solid var(--rosa-suave);
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 14px;
+    font-weight: bold;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.kcal-flota.flotando {
+    animation: flota 1.4s ease-out forwards;
+}
+
+@keyframes flota {
+    0%   { transform: translate(-50%, 10px); opacity: 0; }
+    20%  { transform: translate(-50%, 0); opacity: 1; }
+    100% { transform: translate(-50%, -36px); opacity: 0; }
 }
 
 .grande small {
@@ -369,6 +456,10 @@ h1 {
     padding-right: 48px; /* espacio para la X */
 }
 
+#opciones-lugar {
+    white-space: nowrap; /* que "7-Eleven" no se parta en dos renglones */
+}
+
 .panel h2:focus {
     outline: none; /* el título recibe el foco al cambiar de paso, no necesita contorno */
 }
@@ -395,19 +486,38 @@ h1 {
 }
 
 .opcion {
+    display: block;
+    width: 100%;
+    text-align: left;
     border: 2px solid var(--rosa-suave);
     border-radius: 16px;
     padding: 12px 14px;
     margin-top: 10px;
+    background: white;
+    color: var(--texto);
+    font: inherit;
+    cursor: pointer;
+    box-shadow: 0 3px 0 var(--rosa-suave);
+    transition: transform 0.1s;
+}
+
+.opcion:active {
+    transform: translateY(2px);
+}
+
+.opcion-emoji {
+    float: right;
+    font-size: 28px;
 }
 
 .opcion-nombre {
-    margin: 0;
+    display: block;
     font-weight: bold;
 }
 
 .opcion-datos {
-    margin: 4px 0 0;
+    display: block;
+    margin-top: 4px;
     font-size: 14px;
     color: var(--texto-2);
 }
@@ -500,5 +610,6 @@ button:focus-visible {
 
 /* Si la persona pidió menos animaciones en su celular, las quitamos */
 @media (prefers-reduced-motion: reduce) {
-    .panel, .fondo, .boton, .lugar, .lonchera-relleno, .antojo-carita { transition: none; }
+    .panel, .fondo, .boton, .lugar, .lonchera-relleno, .antojo-carita, .relleno, .opcion { transition: none; }
+    .comida-cae, .kcal-flota, .lonchera { animation: none !important; }
 }
