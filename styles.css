@@ -1,7 +1,22 @@
+/* ---------- Colores (cámbialos aquí y se aplican en todo) ---------- */
+:root {
+    --rosa: #E4007C;          /* rosa mexicano: botón principal y acentos */
+    --rosa-oscuro: #A1005A;   /* sombra del botón rosa */
+    --rosa-suave: #FFE0EE;
+    --verde: #2B7A4B;
+    --verde-suave: #DDF3E4;
+    --naranja-pastel: #FFC9A3;
+    --naranja-oscuro: #8A3D12; /* texto sobre naranja pastel */
+    --naranja-barra: #C2561B;
+    --fondo: #FFF6F0;
+    --texto: #26332C;
+    --texto-2: #5B6660;
+}
+
 /* ---------- Base ---------- */
 body {
-    background: #F6F4EE;
-    color: #26332C;
+    background: var(--fondo);
+    color: var(--texto);
     font-family: "DM Sans", sans-serif;
     padding: 20px;
     margin: 0;
@@ -13,7 +28,11 @@ h1, h2 {
 
 .chico {
     font-size: 13px;
-    color: #5B6660;
+    color: var(--texto-2);
+}
+
+h1 {
+    color: var(--rosa);
 }
 
 .grande {
@@ -33,33 +52,50 @@ h1, h2 {
 /* ---------- Tarjetas ---------- */
 .tarjeta {
     background: white;
-    border: 1px solid #E4E1D8;
+    border: 2px solid var(--rosa-suave);
     border-radius: 20px;
     padding: 16px;
-    margin-top: 14px;
+    margin-top: 16px;
+    box-shadow: 0 6px 0 var(--rosa-suave); /* sombra de color, estilo juguetón */
 }
 
 .verde {
-    background: #E3ECE5;
-    border-color: #E3ECE5;
+    background: var(--verde-suave);
+    border-color: #B5DFC3;
+    box-shadow: 0 6px 0 #B5DFC3;
+}
+
+.naranja {
+    background: var(--naranja-pastel);
+    border-color: #F5AE7E;
+    box-shadow: 0 6px 0 #F5AE7E;
+    color: var(--naranja-oscuro);
+}
+
+.naranja .chico {
+    color: var(--naranja-oscuro);
 }
 
 /* ---------- Barras ---------- */
 .barra {
-    height: 8px;
-    background: #ECEAE3;
-    border-radius: 4px;
+    height: 12px;
+    background: var(--rosa-suave);
+    border-radius: 6px;
     margin-top: 10px;
 }
 
 .relleno {
-    height: 8px;
-    background: #3F6B50;
-    border-radius: 4px;
+    height: 12px;
+    background: var(--rosa);
+    border-radius: 6px;
+}
+
+.naranja .barra {
+    background: white;
 }
 
 .relleno.de-mas {
-    background: #B7683A;
+    background: var(--naranja-barra);
 }
 
 /* ---------- Lista "te falta" ---------- */
@@ -74,13 +110,13 @@ h1, h2 {
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
-    border-top: 1px solid #C3D4C8;
+    border-top: 1px solid #B5DFC3;
     font-size: 14px;
 }
 
 .etiqueta {
     background: white;
-    color: #2F5440;
+    color: var(--verde);
     font-size: 12px;
     font-weight: bold;
     border-radius: 10px;
@@ -132,7 +168,8 @@ h1, h2 {
     height: 44px;
     border: none;
     border-radius: 50%;
-    background: #F6F4EE;
+    background: var(--rosa-suave);
+    color: var(--texto);
     font-size: 18px;
     cursor: pointer;
 }
@@ -144,18 +181,32 @@ h1, h2 {
     min-height: 50px;
     margin-top: 12px;
     border-radius: 25px;
-    border: 1px solid #D5D9CF;
+    border: 2px solid var(--rosa-suave);
     background: white;
-    color: #26332C;
+    color: var(--texto);
     font: inherit;
     font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
+    box-shadow: 0 4px 0 var(--rosa-suave);
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+/* Al presionar, el botón "se hunde" */
+.boton:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--rosa-suave);
 }
 
 .principal {
-    background: #3F6B50;
-    border-color: #3F6B50;
+    background: var(--rosa);
+    border-color: var(--rosa);
     color: white;
+    box-shadow: 0 4px 0 var(--rosa-oscuro);
+}
+
+.principal:active {
+    box-shadow: 0 1px 0 var(--rosa-oscuro);
 }
 
 .boton-texto {
@@ -165,7 +216,7 @@ h1, h2 {
     margin-top: 8px;
     border: none;
     background: none;
-    color: #5B6660;
+    color: var(--texto-2);
     font: inherit;
     font-size: 14px;
     text-decoration: underline;
@@ -176,4 +227,9 @@ h1, h2 {
 button:focus-visible {
     outline: 3px solid #26332C;
     outline-offset: 2px;
+}
+
+/* Si la persona pidió menos animaciones en su celular, las quitamos */
+@media (prefers-reduced-motion: reduce) {
+    .panel, .fondo, .boton { transition: none; }
 }
