@@ -186,6 +186,61 @@ h1 {
     padding: 4px 10px;
 }
 
+/* ---------- Acciones rápidas ---------- */
+.acciones {
+    margin-top: 16px;
+}
+
+.grande-boton {
+    min-height: 56px;
+    font-size: 18px;
+}
+
+.boton.tienda {
+    background: var(--naranja-pastel);
+    border-color: #F5AE7E;
+    color: var(--naranja-oscuro);
+    box-shadow: 0 4px 0 #F5AE7E;
+}
+
+.boton.tienda:active {
+    box-shadow: 0 1px 0 #F5AE7E;
+}
+
+/* ---------- ¿Dónde estás? ---------- */
+.lugares {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 columnas */
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.lugar {
+    min-height: 52px;
+    border: 2px solid var(--rosa-suave);
+    border-radius: 16px;
+    background: white;
+    color: var(--texto);
+    font: inherit;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 3px 0 var(--rosa-suave);
+    transition: transform 0.1s, background 0.2s;
+}
+
+.lugar:active {
+    transform: translateY(2px);
+}
+
+/* El lugar elegido */
+.lugar[aria-pressed="true"] {
+    background: var(--rosa);
+    border-color: var(--rosa);
+    color: white;
+    box-shadow: 0 3px 0 var(--rosa-oscuro);
+}
+
 /* ---------- Ventana de ayuda ---------- */
 .fondo {
     position: fixed;
@@ -294,5 +349,5 @@ button:focus-visible {
 
 /* Si la persona pidió menos animaciones en su celular, las quitamos */
 @media (prefers-reduced-motion: reduce) {
-    .panel, .fondo, .boton, .lonchera-relleno { transition: none; }
+    .panel, .fondo, .boton, .lugar, .lonchera-relleno { transition: none; }
 }

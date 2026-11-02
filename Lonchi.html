@@ -16,6 +16,12 @@
         <p class="aviso-ejemplo">Datos de ejemplo</p>
     </header>
 
+    <!-- ACCIONES RÁPIDAS -->
+    <div class="acciones">
+        <button class="boton principal grande-boton" id="btn-que-como">¿Qué como ahorita?</button>
+        <button class="boton tienda grande-boton" id="btn-tienda"><span aria-hidden="true">🛒</span> Estoy en la tienda</button>
+    </div>
+
     <!-- LONCHERA (calorías + proteína). Los números los pone app.js -->
     <section class="tarjeta">
         <div class="lonchera-fila">
@@ -77,6 +83,21 @@
              aria-valuemin="0" aria-valuemax="100" aria-valuenow="80">
             <div class="relleno de-mas" style="width: 80%"></div>
         </div>
+    </section>
+
+    <!-- ¿DÓNDE ESTÁS? -->
+    <section class="tarjeta">
+        <h2>¿Dónde estás?</h2>
+        <div class="lugares" id="lugares">
+            <button class="lugar" aria-pressed="false" data-lugar="Casa"><span aria-hidden="true">🏠</span> Casa</button>
+            <button class="lugar" aria-pressed="false" data-lugar="Trabajo"><span aria-hidden="true">💼</span> Trabajo</button>
+            <button class="lugar" aria-pressed="false" data-lugar="Oxxo"><span aria-hidden="true">🏪</span> Oxxo</button>
+            <button class="lugar" aria-pressed="false" data-lugar="7-Eleven"><span aria-hidden="true">🏪</span> 7-Eleven</button>
+            <button class="lugar" aria-pressed="false" data-lugar="Costco"><span aria-hidden="true">🛒</span> Costco</button>
+            <button class="lugar" aria-pressed="false" data-lugar="Cafetería"><span aria-hidden="true">☕</span> Cafetería</button>
+        </div>
+        <!-- aria-live: el lector de pantalla lee este texto cuando cambia -->
+        <p class="chico" id="lugar-texto" aria-live="polite">Toca dónde estás y te digo qué te conviene.</p>
     </section>
 
     <!-- VENTANA DE AYUDA -->

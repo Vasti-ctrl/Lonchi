@@ -67,7 +67,10 @@ function leer(almacen, clave) {
     try { return almacen.getItem(clave) === "si"; } catch (e) { return false; }
 }
 
+let focoAnterior = null; // botón que abrió la ventana, para regresar ahí al cerrar
+
 function abrir() {
+    focoAnterior = document.activeElement;
     fondo.classList.add("abierto");
     panel.classList.add("abierto");
     btnSi.focus();
@@ -76,6 +79,7 @@ function abrir() {
 function cerrar() {
     fondo.classList.remove("abierto");
     panel.classList.remove("abierto");
+    if (focoAnterior && focoAnterior !== document.body) focoAnterior.focus();
 }
 
 // "Ahorita no": no vuelve a salir en esta sesión (sessionStorage se borra al cerrar la pestaña)
@@ -97,6 +101,35 @@ fondo.addEventListener("click", cerrar);
 document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") cerrar();
 });
+
+// Botones de inicio: siempre abren la ayuda (aunque haya elegido
+// "solo cuando yo lo pida", porque aquí sí la está pidiendo).
+// Por ahora "Estoy en la tienda" abre el mismo paso 1; luego irá directo a lugar/opciones.
+document.getElementById("btn-que-como").addEventListener("click", abrir);
+document.getElementById("btn-tienda").addEventListener("click", abrir);
+
+// ---------- ¿Dónde estás? ----------
+const botonesLugar = document.querySelectorAll(".lugar");
+const lugarTexto = document.getElementById("lugar-texto");
+
+botonesLugar.forEach(function (boton) {
+    boton.addEventListener("click", function () {
+        // Desmarcar todos y marcar solo el que tocó
+        botonesLugar.forEach(function (b) { b.setAttribute("aria-pressed", "false"); });
+        boton.setAttribute("aria-pressed", "true");
+        const lugar = boton.dataset.lugar; // viene de data-lugar="..."
+        try { sessionStorage.setItem("lonchi-lugar", lugar); } catch (e) {}
+        lugarTexto.textContent = "Estás en " + lugar + ". Las opciones de aquí llegan pronto.";
+    });
+});
+
+// Si ya había elegido lugar en esta sesión, lo volvemos a marcar
+try {
+    const guardado = sessionStorage.getItem("lonchi-lugar");
+    botonesLugar.forEach(function (b) {
+        if (b.dataset.lugar === guardado) b.click();
+    });
+} catch (e) {}
 
 // Abrir al entrar, solo si no dijo que no
 if (!leer(sessionStorage, "lonchi-ahorita-no") && !leer(localStorage, "lonchi-solo-si-pido")) {
