@@ -100,6 +100,23 @@
         <p class="chico" id="lugar-texto" aria-live="polite">Toca dónde estás y te digo qué te conviene.</p>
     </section>
 
+    <!-- GUSTO + ANTOJÓMETRO -->
+    <section class="tarjeta gusto">
+        <h2>¿Quieres darte un gusto hoy?</h2>
+
+        <label class="antojo-titulo" for="antojometro">Antojómetro: ¿qué tanto antojo traes?</label>
+        <div class="antojo-carita" aria-hidden="true" id="antojo-carita">😋</div>
+        <p class="antojo-nivel" id="antojo-nivel">Medio</p>
+        <input type="range" id="antojometro" class="antojometro" min="1" max="5" step="1" value="3">
+        <div class="antojo-extremos" aria-hidden="true"><span>Nada</span><span>¡Muchísimo!</span></div>
+
+        <p class="chico" id="antojo-mensaje" aria-live="polite"></p>
+
+        <button class="boton principal" id="btn-gusto-si">Sí, ayúdame a elegir</button>
+        <button class="boton" id="btn-gusto-no">Hoy no</button>
+        <p class="chico" id="gusto-respuesta" aria-live="polite"></p>
+    </section>
+
     <!-- VENTANA DE AYUDA -->
     <div class="fondo" id="fondo"></div>
 

@@ -131,6 +131,59 @@ try {
     });
 } catch (e) {}
 
+// ---------- Antojómetro ----------
+// Cada nivel tiene su carita, su nombre y un mensaje (sin regaños).
+const nivelesAntojo = {
+    1: { carita: "😌", nombre: "Nada", mensaje: "¡Bien! Si te da hambre, pícale a \"¿Qué como ahorita?\"." },
+    2: { carita: "🙂", nombre: "Poquito", mensaje: "Un antojito. A veces con agua o algo con proteína se pasa." },
+    3: { carita: "😋", nombre: "Medio", mensaje: "Un gusto chiquito puede caber hoy." },
+    4: { carita: "😍", nombre: "Bastante", mensaje: "Mejor un gusto planeado que uno a escondidas. Te ayudo a elegir." },
+    5: { carita: "🤤", nombre: "¡Muchísimo!", mensaje: "Va, se vale. Busquemos uno que casi no mueva tu plan, o la porción chica." }
+};
+
+const antojometro = document.getElementById("antojometro");
+const antojoCarita = document.getElementById("antojo-carita");
+
+function pintarAntojo() {
+    const nivel = nivelesAntojo[antojometro.value];
+    antojoCarita.textContent = nivel.carita;
+    document.getElementById("antojo-nivel").textContent = nivel.nombre;
+    document.getElementById("antojo-mensaje").textContent = nivel.mensaje;
+    // Para el lector de pantalla: dice "Medio" en vez de "3"
+    antojometro.setAttribute("aria-valuetext", nivel.nombre);
+    try { sessionStorage.setItem("lonchi-antojo", antojometro.value); } catch (e) {}
+
+    // Brinquito: poner la clase y quitarla al ratito
+    antojoCarita.classList.add("brinca");
+    setTimeout(function () { antojoCarita.classList.remove("brinca"); }, 200);
+}
+
+// "input" se dispara mientras arrastras, no solo al soltar
+antojometro.addEventListener("input", pintarAntojo);
+
+try {
+    const antojoGuardado = sessionStorage.getItem("lonchi-antojo");
+    if (antojoGuardado) antojometro.value = antojoGuardado;
+} catch (e) {}
+pintarAntojo();
+
+// ---------- Gusto ----------
+const gustoRespuesta = document.getElementById("gusto-respuesta");
+
+document.getElementById("btn-gusto-si").addEventListener("click", function () {
+    let lugar = null;
+    try { lugar = sessionStorage.getItem("lonchi-lugar"); } catch (e) {}
+    if (lugar) {
+        gustoRespuesta.textContent = "Va. Pronto aquí te muestro gustos de " + lugar + " que casi no afectan tu plan.";
+    } else {
+        gustoRespuesta.textContent = "Va. Primero dime dónde estás (arriba) y te muestro opciones.";
+    }
+});
+
+document.getElementById("btn-gusto-no").addEventListener("click", function () {
+    gustoRespuesta.textContent = "Perfecto. Aquí sigo si cambias de opinión.";
+});
+
 // Abrir al entrar, solo si no dijo que no
 if (!leer(sessionStorage, "lonchi-ahorita-no") && !leer(localStorage, "lonchi-solo-si-pido")) {
     abrir();
