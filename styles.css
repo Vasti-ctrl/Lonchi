@@ -1,0 +1,147 @@
+
+.chico {
+    font-size: 13px;
+    color: #5B6660;
+}
+
+h1, h2 {
+    margin: 0;
+}
+
+.tarjeta {
+    background: white;
+    border: 1px solid #E4E1D8;
+    border-radius: 20px;
+    padding: 16px;
+    margin-top: 14px;
+}
+
+.verde {
+    background: #E3ECE5;
+    border-color: #E3ECE5;
+}
+
+.barra {
+    height: 8px;
+    background: #f6f7f4;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.relleno {
+    width: 74%;
+    height: 8px;
+    background: #20884a;
+    border-radius: 4px;
+}
+
+.barra2 {
+    height: 8px;
+    background: #f5f3f1;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.relleno2 {
+    width: 50%;
+    height: 8px;
+    background: #e77a0d;
+    border-radius: 4px;
+}
+
+
+.lista {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0;
+}
+
+.lista li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-top: 1px solid #C3D4C8;
+    font-size: 14px;
+}
+
+.etiqueta {
+    background: white;
+    color: #2F5440;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 4px 10px;
+}
+
+body {
+    background: #F6F4EE;
+    font-family: sans-serif;
+    padding: 20px;
+}
+
+.tarjeta {
+    background: white;
+    border: 1px solid #E4E1D8;
+    border-radius: 20px;
+    padding: 16px;
+}
+
+.grande {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.fondo {
+    position: fixed;
+    inset: 0;
+    background: rgba(38, 51, 44, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s;
+}
+
+.panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white;
+    border-radius: 28px 28px 0 0;
+    padding: 24px 20px 32px;
+    transform: translateY(100%);
+    transition: transform 0.5s;
+}
+
+.fondo.abierto {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.panel.abierto {
+    transform: translateY(0);
+}
+
+.boton {
+    display: block;
+    width: 100%;
+    min-height: 50px;
+    margin-top: 12px;
+    border-radius: 25px;
+    border: 1px solid #D5D9CF;
+    background: white;
+    font-size: 16px;
+}
+
+.principal {
+    display: block;
+    width: 100%;
+    min-height: 50px;
+    margin-top: 12px;
+    border-radius: 25px;
+    border: 1px solid #D5D9CF;
+    background: #3F6B50;
+    color: white;
+    border-color: #3F6B50;
+}
+
