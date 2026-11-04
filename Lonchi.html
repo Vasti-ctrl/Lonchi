@@ -10,128 +10,221 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <p class="chico" id="dia">Hoy</p>
-        <h1>Así vas hoy</h1>
-        <p class="aviso-ejemplo">Datos de ejemplo</p>
+    <!-- ENCABEZADO (se queda arriba en todas las pestañas) -->
+    <header class="arriba">
+        <div>
+            <p class="chico" id="dia">Hoy</p>
+            <h1 id="titulo-pantalla">Así vas hoy</h1>
+            <p class="aviso-ejemplo">Datos de ejemplo</p>
+        </div>
+        <p class="racha" id="racha" title="Días seguidos cerrando tu día">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2c1 3.5 5 5.8 5 11a5 5 0 0 1-10 0c0-2 .8-3.4 2-4.6.2 1.4.9 2.3 1.8 2.6C10.2 8.2 10.6 4.8 12 2z"/>
+            </svg>
+            <span class="sr">Racha:</span> <span id="racha-num">0 días</span>
+        </p>
     </header>
 
-    <!-- ACCIONES RÁPIDAS -->
-    <div class="acciones">
-        <button class="boton principal grande-boton" id="btn-que-como">¿Qué como ahorita?</button>
-        <button class="boton tienda grande-boton" id="btn-tienda"><span aria-hidden="true">🛒</span> Estoy en la tienda</button>
-    </div>
+    <!-- ===================== PESTAÑA HOY ===================== -->
+    <main>
+    <section data-pantalla="hoy" aria-label="Hoy">
 
-    <!-- LONCHERA (calorías + proteína). Los números los pone app.js -->
-    <section class="tarjeta" id="tarjeta-lonchera">
-        <div class="lonchera-fila">
-            <div class="lonchera-caja">
-                <svg class="lonchera" id="lonchera" viewBox="0 0 140 130" role="progressbar"
-                     aria-label="Calorías del día" aria-valuemin="0">
-                    <defs>
-                        <!-- Forma del cuerpo: el relleno no se sale de aquí -->
-                        <clipPath id="cuerpo-forma">
-                            <rect x="10" y="44" width="120" height="80" rx="16"/>
-                        </clipPath>
-                    </defs>
-                    <!-- Asa: un trazo grueso oscuro y encima uno rosa = borde de caricatura -->
-                    <path d="M50 34 V22 q0 -12 12 -12 h16 q12 0 12 12 V34" class="asa-borde"/>
-                    <path d="M50 34 V22 q0 -12 12 -12 h16 q12 0 12 12 V34" class="asa"/>
-                    <!-- Cuerpo vacío -->
-                    <rect x="10" y="44" width="120" height="80" rx="16" class="cuerpo"/>
-                    <!-- Relleno con olita: sube según lo que llevas (lo mueve --lleno) -->
-                    <g clip-path="url(#cuerpo-forma)">
-                        <path class="lonchera-relleno"
-                              d="M0 54 q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 V130 H0 Z"/>
-                    </g>
-                    <!-- Contorno y brillo del cuerpo -->
-                    <rect x="10" y="44" width="120" height="80" rx="16" class="contorno"/>
-                    <!-- Costura punteada (se ve acolchada) -->
-                    <rect x="18" y="62" width="104" height="54" rx="10" class="costura"/>
-                    <path d="M118 68 V108" class="brillo"/>
-                    <!-- Tapa acolchada, un poco más ancha -->
-                    <rect x="4" y="30" width="132" height="26" rx="13" class="tapa"/>
-                    <path d="M18 37 q22 -4 44 -3" class="brillo"/>
-                    <!-- Cierre en zigzag -->
-                    <polyline points="16,50 20,47 24,50 28,47 32,50 36,47 40,50 44,47 48,50 52,47 56,50 60,47 64,50 68,47 72,50 76,47 80,50 84,47 88,50 92,47 96,50 100,47 104,50 108,47 112,50 116,47 120,50 124,47" class="cierre"/>
-                    <!-- Jaladeras del cierre -->
-                    <rect x="28" y="52" width="8" height="18" rx="4" class="jaladera" transform="rotate(14 32 52)"/>
-                    <rect x="39" y="52" width="8" height="18" rx="4" class="jaladera" transform="rotate(-4 43 52)"/>
-                </svg>
-                <!-- Para la animación: la comida que cae y el "+kcal" que flota -->
-                <span class="comida-cae" id="comida-cae" aria-hidden="true"></span>
-                <span class="kcal-flota" id="kcal-flota" aria-hidden="true"></span>
+        <!-- ACCIONES RÁPIDAS -->
+        <div class="acciones">
+            <button class="boton principal grande-boton" id="btn-que-como">¿Qué como ahorita?</button>
+            <button class="boton tienda grande-boton" id="btn-tienda"><span aria-hidden="true">🛒</span> Estoy en la tienda</button>
+        </div>
+
+        <!-- LONCHERA (calorías + proteína). Los números los pone app.js -->
+        <section class="tarjeta" id="tarjeta-lonchera">
+            <div class="lonchera-fila">
+                <div class="lonchera-caja" id="lonchera-caja">
+                    <svg class="lonchera" id="lonchera" viewBox="0 0 140 130" role="progressbar"
+                         aria-label="Calorías del día" aria-valuemin="0">
+                        <defs>
+                            <!-- Forma del cuerpo: el relleno no se sale de aquí -->
+                            <clipPath id="cuerpo-forma">
+                                <rect x="10" y="44" width="120" height="80" rx="16"/>
+                            </clipPath>
+                        </defs>
+                        <!-- Comida que ya elegiste: va detrás del cuerpo, asoma por arriba -->
+                        <g id="lonchera-comida" class="lonchera-comida"></g>
+                        <!-- Cuerpo vacío -->
+                        <rect x="10" y="44" width="120" height="80" rx="16" class="cuerpo"/>
+                        <!-- Relleno con olita: sube según lo que llevas (lo mueve --lleno) -->
+                        <g clip-path="url(#cuerpo-forma)">
+                            <path class="lonchera-relleno"
+                                  d="M0 54 q10 -6 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 V130 H0 Z"/>
+                        </g>
+                        <!-- Contorno, costura y brillo del cuerpo -->
+                        <rect x="10" y="44" width="120" height="80" rx="16" class="contorno"/>
+                        <rect x="18" y="62" width="104" height="54" rx="10" class="costura"/>
+                        <path d="M118 68 V108" class="brillo"/>
+                        <!-- Jaladeras del cierre -->
+                        <rect x="28" y="52" width="8" height="18" rx="4" class="jaladera" transform="rotate(14 32 52)"/>
+                        <rect x="39" y="52" width="8" height="18" rx="4" class="jaladera" transform="rotate(-4 43 52)"/>
+                        <!-- TAPA: se abre cuando la lonchera está vacía y se cierra al llegar a tu meta -->
+                        <g id="tapa" class="tapa-grupo">
+                            <path d="M50 34 V22 q0 -12 12 -12 h16 q12 0 12 12 V34" class="asa-borde"/>
+                            <path d="M50 34 V22 q0 -12 12 -12 h16 q12 0 12 12 V34" class="asa"/>
+                            <rect x="4" y="30" width="132" height="26" rx="13" class="tapa"/>
+                            <path d="M18 37 q22 -4 44 -3" class="brillo"/>
+                            <polyline points="16,50 20,47 24,50 28,47 32,50 36,47 40,50 44,47 48,50 52,47 56,50 60,47 64,50 68,47 72,50 76,47 80,50 84,47 88,50 92,47 96,50 100,47 104,50 108,47 112,50 116,47 120,50 124,47" class="cierre"/>
+                        </g>
+                    </svg>
+                    <!-- Para la animación: la comida que cae y el "+kcal" que flota -->
+                    <span class="comida-cae" id="comida-cae" aria-hidden="true"></span>
+                    <span class="kcal-flota" id="kcal-flota" aria-hidden="true"></span>
+                </div>
+
+                <div>
+                    <h2 id="titulo-lonchera" tabindex="-1">Tu lonchera</h2>
+                    <p class="grande"><span id="kcal-quedan">–</span> <small>kcal</small></p>
+                    <p class="chico">te quedan de <span id="kcal-meta">–</span></p>
+                    <p class="chip" id="lonchera-porcentaje">–</p>
+                </div>
             </div>
+            <p class="chico lonchera-mensaje" id="lonchera-mensaje" aria-live="polite"></p>
 
-            <div>
-                <h2 id="titulo-lonchera" tabindex="-1">Tu lonchera</h2>
-                <p class="grande"><span id="kcal-quedan">–</span> <small>kcal</small></p>
-                <p class="chico">te quedan de <span id="kcal-meta">–</span></p>
-                <p class="chip" id="lonchera-porcentaje">–</p>
+            <div class="proteina">
+                <p><strong>Proteína</strong> <span class="chico" id="prot-texto">–</span></p>
+                <div class="barra" role="progressbar" aria-label="Proteína del día" id="prot-barra" aria-valuemin="0">
+                    <div class="relleno verde-relleno" id="prot-relleno"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MASCOTA (y luego el muñeco) con su globo de mensaje -->
+        <div class="companeros">
+            <div class="mascota" id="mascota" aria-hidden="true"></div>
+            <div class="burbuja" aria-live="polite">
+                <b id="burbuja-nombre">Chispa</b>
+                <span id="burbuja-texto"></span>
             </div>
         </div>
-        <p class="chico lonchera-mensaje" id="lonchera-mensaje" aria-live="polite"></p>
 
-        <div class="proteina">
-            <p><strong>Proteína</strong> <span class="chico" id="prot-texto">–</span></p>
-            <div class="barra" role="progressbar" aria-label="Proteína del día" id="prot-barra" aria-valuemin="0">
-                <div class="relleno verde-relleno" id="prot-relleno"></div>
+        <!-- LO QUE LLEVAS HOY -->
+        <section class="tarjeta">
+            <h2 id="titulo-lista" tabindex="-1">Lo que llevas hoy</h2>
+            <ul class="lista-comidas" id="lista-comidas"></ul>
+        </section>
+
+        <!-- TE FALTA (fibra) -->
+        <section class="tarjeta verde">
+            <h2>Te falta fibra</h2>
+            <p class="chico">Llevas 11 de 25 g (ejemplo)</p>
+            <ul class="lista">
+                <li>1 manzana con cáscara <span class="etiqueta">+4 g ej.</span></li>
+                <li>½ taza de lentejas <span class="etiqueta">+8 g ej.</span></li>
+                <li>2 cucharadas de chía <span class="etiqueta">+10 g ej.</span></li>
+            </ul>
+        </section>
+
+        <!-- DE MÁS (carbohidratos) -->
+        <section class="tarjeta naranja">
+            <h2>Carbohidratos de más</h2>
+            <p class="chico">+25 g sobre tu plan (ejemplo)</p>
+            <div class="barra" role="progressbar" aria-label="Carbohidratos sobre tu plan"
+                 aria-valuemin="0" aria-valuemax="100" aria-valuenow="80">
+                <div class="relleno de-mas" style="width: 80%"></div>
             </div>
-        </div>
+        </section>
+
+        <!-- ¿DÓNDE ESTÁS? -->
+        <section class="tarjeta">
+            <h2>¿Dónde estás?</h2>
+            <div class="lugares" id="lugares">
+                <button class="lugar" aria-pressed="false" data-lugar="Casa"><span aria-hidden="true">🏠</span> Casa</button>
+                <button class="lugar" aria-pressed="false" data-lugar="Trabajo"><span aria-hidden="true">💼</span> Trabajo</button>
+                <button class="lugar" aria-pressed="false" data-lugar="Oxxo"><span aria-hidden="true">🏪</span> Oxxo</button>
+                <button class="lugar" aria-pressed="false" data-lugar="7-Eleven"><span aria-hidden="true">🏪</span> 7-Eleven</button>
+                <button class="lugar" aria-pressed="false" data-lugar="Costco"><span aria-hidden="true">🛒</span> Costco</button>
+                <button class="lugar" aria-pressed="false" data-lugar="Cafetería"><span aria-hidden="true">☕</span> Cafetería</button>
+            </div>
+            <!-- aria-live: el lector de pantalla lee este texto cuando cambia -->
+            <p class="chico" id="lugar-texto" aria-live="polite">Toca dónde estás y te digo qué te conviene.</p>
+        </section>
+
+        <!-- GUSTO + ANTOJÓMETRO -->
+        <section class="tarjeta gusto">
+            <h2>¿Quieres darte un gusto hoy?</h2>
+
+            <label class="antojo-titulo" for="antojometro">Antojómetro: ¿qué tanto antojo traes?</label>
+            <div class="antojo-carita" aria-hidden="true" id="antojo-carita">😋</div>
+            <p class="antojo-nivel" id="antojo-nivel">Medio</p>
+            <input type="range" id="antojometro" class="antojometro" min="1" max="5" step="1" value="3">
+            <div class="antojo-extremos" aria-hidden="true"><span>Nada</span><span>¡Muchísimo!</span></div>
+
+            <p class="chico" id="antojo-mensaje" aria-live="polite"></p>
+
+            <button class="boton principal" id="btn-gusto-si">Sí, ayúdame a elegir</button>
+            <button class="boton" id="btn-gusto-no">Hoy no</button>
+            <p class="chico" id="gusto-respuesta" aria-live="polite"></p>
+        </section>
+
+        <!-- MI META -->
+        <section class="tarjeta">
+            <h2>Mi meta</h2>
+            <p class="etiqueta-campo" id="etq-objetivo">Objetivo</p>
+            <div class="fichas" role="group" aria-labelledby="etq-objetivo">
+                <button class="ficha" data-objetivo="bajar">Bajar de peso</button>
+                <button class="ficha" data-objetivo="ordenado">Comer ordenado</button>
+                <button class="ficha" data-objetivo="musculo">Ganar músculo</button>
+            </div>
+            <p class="etiqueta-campo" id="etq-kcal">Calorías al día</p>
+            <div class="fichas" role="group" aria-labelledby="etq-kcal">
+                <button class="ficha" data-kcal="1600">1,600</button>
+                <button class="ficha" data-kcal="1800">1,800</button>
+                <button class="ficha" data-kcal="2000">2,000</button>
+            </div>
+            <p class="chico">Valores de ejemplo para probar la app. No son una recomendación personal ni sustituyen a tu nutriólogo.</p>
+        </section>
+
+        <!-- CERRAR MI DÍA -->
+        <section class="tarjeta centrado">
+            <button class="boton principal" id="btn-cerrar-dia">Cerrar mi día</button>
+            <p class="chico">La racha cuenta por registrar, no por comer menos.</p>
+        </section>
+
+        <p class="centrado">
+            <button class="boton-texto" id="btn-reiniciar">Borrar datos de prueba</button>
+        </p>
     </section>
 
-    <!-- TE FALTA (fibra) -->
-    <section class="tarjeta verde">
-        <h2>Te falta fibra</h2>
-        <p class="chico">Llevas 11 de 25 g (ejemplo)</p>
-        <ul class="lista">
-            <li>1 manzana con cáscara <span class="etiqueta">+4 g ej.</span></li>
-            <li>½ taza de lentejas <span class="etiqueta">+8 g ej.</span></li>
-            <li>2 cucharadas de chía <span class="etiqueta">+10 g ej.</span></li>
-        </ul>
+    <!-- ===================== PESTAÑA ANTOJOS ===================== -->
+    <section data-pantalla="antojos" aria-label="Antojos" hidden>
+        <p class="intro">Productos típicos de tiendas como Oxxo o 7-Eleven. No sé qué hay en tu tienda: elige lo más parecido.</p>
+        <div class="fichas" id="tipos-antojo" role="group" aria-label="Tipo de antojo"></div>
+        <p class="chico" id="nota-orden"></p>
+        <ul class="productos" id="productos"></ul>
+        <p class="chico">Calorías y proteína aproximadas, valores de ejemplo. Revisa la etiqueta del producto.</p>
     </section>
 
-    <!-- DE MÁS (carbohidratos) -->
-    <section class="tarjeta naranja">
-        <h2>Carbohidratos de más</h2>
-        <p class="chico">+25 g sobre tu plan (ejemplo)</p>
-        <div class="barra" role="progressbar" aria-label="Carbohidratos sobre tu plan"
-             aria-valuemin="0" aria-valuemax="100" aria-valuenow="80">
-            <div class="relleno de-mas" style="width: 80%"></div>
-        </div>
+    <!-- ===================== PESTAÑA MUÑECO ===================== -->
+    <section data-pantalla="muneco" aria-label="Muñeco" hidden>
+        <section class="tarjeta centrado">
+            <div class="mascota grande-mascota" id="mascota-grande" aria-hidden="true"></div>
+            <h2>Muy pronto</h2>
+            <p class="chico">Aquí vas a armar tu muñeco y desbloquear cosas con tu racha.</p>
+        </section>
     </section>
+    </main>
 
-    <!-- ¿DÓNDE ESTÁS? -->
-    <section class="tarjeta">
-        <h2>¿Dónde estás?</h2>
-        <div class="lugares" id="lugares">
-            <button class="lugar" aria-pressed="false" data-lugar="Casa"><span aria-hidden="true">🏠</span> Casa</button>
-            <button class="lugar" aria-pressed="false" data-lugar="Trabajo"><span aria-hidden="true">💼</span> Trabajo</button>
-            <button class="lugar" aria-pressed="false" data-lugar="Oxxo"><span aria-hidden="true">🏪</span> Oxxo</button>
-            <button class="lugar" aria-pressed="false" data-lugar="7-Eleven"><span aria-hidden="true">🏪</span> 7-Eleven</button>
-            <button class="lugar" aria-pressed="false" data-lugar="Costco"><span aria-hidden="true">🛒</span> Costco</button>
-            <button class="lugar" aria-pressed="false" data-lugar="Cafetería"><span aria-hidden="true">☕</span> Cafetería</button>
-        </div>
-        <!-- aria-live: el lector de pantalla lee este texto cuando cambia -->
-        <p class="chico" id="lugar-texto" aria-live="polite">Toca dónde estás y te digo qué te conviene.</p>
-    </section>
-
-    <!-- GUSTO + ANTOJÓMETRO -->
-    <section class="tarjeta gusto">
-        <h2>¿Quieres darte un gusto hoy?</h2>
-
-        <label class="antojo-titulo" for="antojometro">Antojómetro: ¿qué tanto antojo traes?</label>
-        <div class="antojo-carita" aria-hidden="true" id="antojo-carita">😋</div>
-        <p class="antojo-nivel" id="antojo-nivel">Medio</p>
-        <input type="range" id="antojometro" class="antojometro" min="1" max="5" step="1" value="3">
-        <div class="antojo-extremos" aria-hidden="true"><span>Nada</span><span>¡Muchísimo!</span></div>
-
-        <p class="chico" id="antojo-mensaje" aria-live="polite"></p>
-
-        <button class="boton principal" id="btn-gusto-si">Sí, ayúdame a elegir</button>
-        <button class="boton" id="btn-gusto-no">Hoy no</button>
-        <p class="chico" id="gusto-respuesta" aria-live="polite"></p>
-    </section>
+    <!-- PESTAÑAS DE ABAJO -->
+    <nav class="pestanas" aria-label="Secciones">
+        <button class="pestana" data-ir="hoy" aria-current="page">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>
+            Hoy
+        </button>
+        <button class="pestana" data-ir="antojos">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.4 5.6 6 .6-4.5 4 1.3 5.9L12 16l-5.2 3.1 1.3-5.9-4.5-4 6-.6z"/></svg>
+            Antojos
+        </button>
+        <button class="pestana" data-ir="muneco">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c1 1.5 2.2 2.2 3.5 2.2s2.5-.7 3.5-2.2"/><path d="M9 9.5h.01M15 9.5h.01"/></svg>
+            Muñeco
+        </button>
+    </nav>
 
     <!-- VENTANA DE AYUDA -->
     <div class="fondo" id="fondo"></div>

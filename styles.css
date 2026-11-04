@@ -18,7 +18,7 @@ body {
     background: var(--fondo);
     color: var(--texto);
     font-family: "DM Sans", sans-serif;
-    padding: 20px;
+    padding: 20px 20px 110px; /* abajo: espacio para las pestañas */
     margin: 0;
 }
 
@@ -110,6 +110,7 @@ h1 {
     position: relative; /* para colocar encima la comida que cae */
     width: 130px;
     flex-shrink: 0;
+    padding-top: 22px;  /* espacio para cuando la tapa está abierta */
 }
 
 .lonchera {
@@ -142,6 +143,38 @@ h1 {
     /* Sube según --lleno (0 = vacía, 1 = llena). 72 = alto visible del cuerpo */
     transform: translateY(calc((1 - var(--lleno, 0)) * 72px));
     transition: transform 0.9s ease-out;
+}
+
+/* La TAPA se abre cuando la lonchera está vacía y se cierra al llenarse.
+   Gira desde su esquina izquierda de abajo, como bisagra. */
+.tapa-grupo {
+    transform-box: fill-box;
+    transform-origin: 0% 100%;
+    transform: translateY(calc((1 - var(--lleno, 0)) * -12px))
+               rotate(calc((1 - var(--lleno, 0)) * -12deg));
+    transition: transform 0.8s cubic-bezier(0.3, 1.4, 0.5, 1); /* termina con un rebotito */
+}
+
+/* Si te pasas más de 10 %, el relleno cambia a naranja */
+.lonchera.pasada .lonchera-relleno {
+    fill: #F4A26B;
+}
+
+/* Confeti cuando se cierra */
+.confeti {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 12px;
+    border-radius: 2px;
+    pointer-events: none;
+    animation: confeti 1s ease-out forwards;
+}
+
+@keyframes confeti {
+    from { transform: translate(0, 0) rotate(0); opacity: 1; }
+    to   { transform: translate(var(--dx), var(--dy)) rotate(260deg); opacity: 0; }
 }
 
 .lonchera-mensaje {
@@ -416,6 +449,7 @@ h1 {
 
 /* ---------- Ventana de ayuda ---------- */
 .fondo {
+    z-index: 30; /* encima de las pestañas */
     position: fixed;
     inset: 0;
     background: rgba(38, 51, 44, 0.5);
@@ -430,6 +464,7 @@ h1 {
 }
 
 .panel {
+    z-index: 40;
     position: fixed;
     left: 0;
     right: 0;
@@ -611,5 +646,321 @@ button:focus-visible {
 /* Si la persona pidió menos animaciones en su celular, las quitamos */
 @media (prefers-reduced-motion: reduce) {
     .panel, .fondo, .boton, .lugar, .lonchera-relleno, .antojo-carita, .relleno, .opcion { transition: none; }
-    .comida-cae, .kcal-flota, .lonchera { animation: none !important; }
+    .comida-cae, .kcal-flota, .lonchera, .mascota, .racha, .confeti { animation: none !important; }
+    .tapa-grupo { transition: none; }
+}
+
+
+/* =============================================================
+   Encabezado, racha y pestañas
+   ============================================================= */
+.sr { /* texto solo para lector de pantalla */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+.arriba {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.racha {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    background: white;
+    border: 2px solid var(--rosa-suave);
+    border-radius: 999px;
+    padding: 6px 12px 6px 10px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.racha svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--naranja-pastel);
+    stroke: var(--texto);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+}
+
+.pestanas {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 8px 16px calc(8px + env(safe-area-inset-bottom, 0px));
+    background: white;
+    border-top: 2px solid var(--rosa-suave);
+}
+
+.pestana {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-height: 56px;
+    border: none;
+    border-radius: 16px;
+    background: none;
+    color: var(--texto-2);
+    font: inherit;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.pestana svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.pestana[aria-current="page"] {
+    background: var(--rosa-suave);
+    color: var(--rosa-oscuro);
+}
+
+.centrado {
+    text-align: center;
+}
+
+/* Brinquito (mascota y racha) */
+.salta {
+    animation: salta 0.5s ease-out;
+}
+
+@keyframes salta {
+    0%   { transform: translateY(0); }
+    40%  { transform: translateY(-8px); }
+    100% { transform: translateY(0); }
+}
+
+/* =============================================================
+   Mascota y su globo
+   ============================================================= */
+.companeros {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: end;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.mascota svg {
+    display: block;
+    width: 72px;
+    height: auto;
+}
+
+.grande-mascota svg {
+    width: 120px;
+    margin: 0 auto 8px;
+}
+
+.burbuja {
+    position: relative;
+    background: white;
+    border: 2px solid var(--naranja-pastel);
+    border-radius: 18px 18px 18px 6px;
+    padding: 10px 14px;
+    font-size: 15px;
+}
+
+.burbuja b {
+    display: block;
+    color: var(--naranja-oscuro);
+}
+
+/* =============================================================
+   Lo que llevas hoy
+   ============================================================= */
+.lista-comidas {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0;
+}
+
+.lista-comidas li {
+    display: grid;
+    grid-template-columns: 32px 1fr auto auto;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    border-top: 1px solid var(--rosa-suave);
+}
+
+.lista-comidas li.vacio {
+    display: block;
+    padding: 8px 0;
+    color: var(--texto-2);
+    font-size: 14px;
+}
+
+.lista-comidas .emoji {
+    font-size: 24px;
+    text-align: center;
+}
+
+.lista-comidas .kcal {
+    color: var(--texto-2);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.quitar {
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    color: var(--texto-2);
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.quitar:hover {
+    background: var(--rosa-suave);
+}
+
+#titulo-lista:focus {
+    outline: none;
+}
+
+/* =============================================================
+   Fichas (Mi meta y tipos de antojo)
+   ============================================================= */
+.etiqueta-campo {
+    margin: 14px 0 8px;
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--texto-2);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.fichas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ficha {
+    min-height: 44px;
+    padding: 8px 16px;
+    border: 2px solid var(--rosa-suave);
+    border-radius: 999px;
+    background: white;
+    color: var(--texto);
+    font: inherit;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.ficha[aria-pressed="true"] {
+    background: var(--rosa);
+    border-color: var(--rosa);
+    color: white;
+}
+
+/* =============================================================
+   Pestaña Antojos
+   ============================================================= */
+.intro {
+    margin: 16px 0;
+    color: var(--texto-2);
+}
+
+#nota-orden {
+    margin: 12px 0 0;
+}
+
+.productos {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0;
+}
+
+.producto {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+    padding: 12px;
+    background: white;
+    border: 2px solid var(--rosa-suave);
+    border-radius: 18px;
+    box-shadow: 0 4px 0 var(--rosa-suave);
+}
+
+.producto.mejor {
+    background: var(--verde-suave);
+    border-color: var(--verde);
+    box-shadow: 0 4px 0 #B5DFC3;
+}
+
+.producto-emoji {
+    font-size: 32px;
+    text-align: center;
+}
+
+.producto-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.producto-macros {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.insignias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.insignia.suave {
+    background: var(--rosa-suave);
+    color: var(--rosa-oscuro);
+    margin-bottom: 0;
+}
+
+.boton-chico {
+    min-height: 44px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 14px;
+    background: var(--rosa);
+    color: white;
+    font: inherit;
+    font-weight: bold;
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: 0 3px 0 var(--rosa-oscuro);
+}
+
+.boton-chico:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--rosa-oscuro);
 }
